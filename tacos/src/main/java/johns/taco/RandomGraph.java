@@ -12,22 +12,23 @@ import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 
 public class RandomGraph {
     private int size;
+    public int convergence; // number of times it takes to get a connected graph
     private ArrayList<LinkedList<Integer>> spine; // list of linkedlists
     public UndirectedGraph<String,String> g;
-    private ArrayList<ArrayList<Integer>> matrix;
+    private ArrayList<ArrayList<Integer>> matrix; // adjacency matrix temporarily for dev
 
     // constructor
     public RandomGraph(int size) {
         this.size = size;
-        int iterations = 1;
+        convergence = 1;
         initializeGraph();
         while (!connected()) {
             System.out.println("Populating graph");
             initializeGraph();
             populateADJ();
-            iterations++;
+            convergence++;
         }
-        System.out.println("Random graph successfully generated after " + iterations + " generations");
+        System.out.println("Random graph successfully generated after " + convergence + " generations");
         jungObject();
     }
 
@@ -115,6 +116,9 @@ public class RandomGraph {
         boolean[] visited = new boolean[size];
         Queue<Integer> q = new LinkedList<>();
         ArrayList<Integer> levels = new ArrayList<>(size + 1);
+        for (int i = 0; i < size; i++) {
+            levels.add(0);
+        }
 
 
         visited[start] = true;
@@ -124,15 +128,15 @@ public class RandomGraph {
         while (!q.isEmpty()) {
             start = q.poll();
             int currentLevel = levels.get(start);
-            int nextColor = 1 - currentLevel;
-
+            
             LinkedList<Integer> neighborhood = spine.get(start);
             System.out.println(q.size());
             for (Integer neighbor : neighborhood) {
                 if (!visited[neighbor]) {
                     visited[neighbor] = true;
                     q.add(neighbor);
-                    levels.add(neighbor, nextColor); // color alternating by parity of level
+                    System.out.println("neighbor: " + neighbor);
+                    levels.add(neighbor, currentLevel + 1); // color alternating by parity of level
                 } else { // have previously visited neighbor
                     if (levels.get(neighbor) == currentLevel) {
                         System.out.println("Graph is not bipartite");
