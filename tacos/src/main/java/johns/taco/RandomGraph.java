@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Queue;
 
 import edu.uci.ics.jung.graph.UndirectedGraph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
@@ -49,7 +50,7 @@ public class RandomGraph {
         Random random = new Random(); // functionally a sparsity parameter
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (random.nextInt(100) < 10 && i != j && matrix.get(j).get(i) == 0) { // add something to ensure the inverse edge doesn't exist
+                if (random.nextInt(100) < 8 && i != j && matrix.get(j).get(i) == 0) {
                     spine.get(i).addLast(j); // add edge from i to j
                     matrix.get(i).add(j);
                 }
@@ -107,5 +108,41 @@ public class RandomGraph {
         System.out.println("JUNG representation created");
     }
 
+    // bfs approach for two coloring a graph
+    // if two nodes are on the same bfs level they are given the same color
+    public boolean twoColor() {
+        int start = 0;
+        boolean[] visited = new boolean[size];
+        Queue<Integer> q = new LinkedList<>();
+        ArrayList<Integer> levels = new ArrayList<>(size + 1);
+
+
+        visited[start] = true;
+        q.add(start);
+        levels.add(0,1);
+        
+        while (!q.isEmpty()) {
+            start = q.poll();
+            int currentLevel = levels.get(start);
+            int nextColor = 1 - currentLevel;
+
+            LinkedList<Integer> neighborhood = spine.get(start);
+            System.out.println(q.size());
+            for (Integer neighbor : neighborhood) {
+                if (!visited[neighbor]) {
+                    visited[neighbor] = true;
+                    q.add(neighbor);
+                    levels.add(neighbor, nextColor); // color alternating by parity of level
+                } else { // have previously visited neighbor
+                    if (levels.get(neighbor) == currentLevel) {
+                        System.out.println("Graph is not bipartite");
+                        return false;
+                    }
+                }
+            }
+        }
+        System.out.println("Graph is bipartite");
+        return true;
+    }
 
 }
