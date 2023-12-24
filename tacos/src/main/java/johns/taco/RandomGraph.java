@@ -149,4 +149,34 @@ public class RandomGraph {
         return true;
     }
 
+    // later change to boolean
+    // basic greedy coloring - isomorphisms / different start vertices can change soln
+    public Integer greedyKColor() {
+        ArrayList<Integer> colors = new ArrayList<>();
+        ArrayList<Integer> allColors = new ArrayList<>();
+        HashSet<Integer> usedColors = new HashSet<>();
+
+        for (int j = 0; j < size; j++) {
+            colors.add(0);
+            allColors.add(j + 1);
+        }
+        // colors initalized with all zeroes - uncolored vertices
+
+        // loop vertices
+        // assign lowest unused color
+        for (int i = 0; i < size; i++) {
+            ArrayList<Integer> availableColors = new ArrayList<>(allColors);
+            // check neighbors of each vertex
+            for (Integer vertex : spine.get(i)) {
+                if (colors.get(vertex) != 0) {
+                    availableColors.remove(colors.get(vertex));
+                }
+            }
+            int color = availableColors.get(0);
+            colors.add(i, color);
+            usedColors.add(color);
+        }
+        return usedColors.size();
+    }
+
 }
