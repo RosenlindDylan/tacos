@@ -23,6 +23,6 @@ public class TwoColor {
 
         System.out.println(x + " bipartite and " + y + " nonbipartite");
         System.out.println("generating these random graphs of size " + n + " took an average of "
-         + totalIterations/generations);
+         + totalIterations/generations + " randomizations");
     }
 }
