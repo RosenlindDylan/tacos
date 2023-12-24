@@ -1,1 +1,1 @@
-K-colorings of random graphs
+K-colorings of random graphs, in progress. Project to learn about approximation techniques for the problem for least k-coloring of a randomly generated graph. Will be implementing a few methods of doing this, some older and some newer.
