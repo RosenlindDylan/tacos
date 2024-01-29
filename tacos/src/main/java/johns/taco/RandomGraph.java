@@ -2,6 +2,7 @@ package johns.taco;
 import java.util.Random;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -149,7 +150,6 @@ public class RandomGraph {
         return true;
     }
 
-    // later change to boolean
     // basic greedy coloring - isomorphisms / different start vertices can change soln
     public Integer greedyKColor() {
         ArrayList<Integer> colors = new ArrayList<>();
@@ -178,5 +178,62 @@ public class RandomGraph {
         }
         return usedColors.size();
     }
+
+    // optimal solution for wheel graphs
+    public Integer dSatur() {
+        ArrayList<Integer> vertex_colors = new ArrayList<>();
+        ArrayList<Integer> allColors = new ArrayList<>();
+        ArrayList<Integer> availableColors;
+        HashSet<Integer> usedColors = new HashSet<>();
+        HashMap<Integer, Integer> saturation_degree = new HashMap<>();
+        HashSet<Integer> current_degree;
+        HashSet<Integer> uncolored_vertices = new HashSet<>();
+        
+        int max_sat_vertex;
+        
+        for (int j = 0; j < size; j++) {
+            vertex_colors.add(0);
+            allColors.add(j + 1);
+            saturation_degree.put(j, 0);
+            uncolored_vertices.add(j);
+        }
+        // colors initalized with all zeroes - uncolored vertices
+    
+        while (!uncolored_vertices.isEmpty()) { // problem doing too many iterations
+            availableColors = new ArrayList<>(allColors);
+            max_sat_vertex = -1;
+            for (Integer num : saturation_degree.keySet()) { // find max saturation degree vertex
+                if (saturation_degree.get(num) > max_sat_vertex && uncolored_vertices.contains(num)) {
+                    max_sat_vertex = num; // could make this better by keeping max heap pq
+                }
+            }
+
+            // check neighbors of each vertex to find available colors
+            for (Integer vertex : spine.get(max_sat_vertex)) {
+                if (!uncolored_vertices.contains(vertex)) {
+                    availableColors.remove(vertex_colors.get(vertex));
+                }
+            }
+            int selected_color = availableColors.get(0);
+            usedColors.add(availableColors.get(0));
+            vertex_colors.add(max_sat_vertex, selected_color);
+            uncolored_vertices.remove(max_sat_vertex);
+
+            // update saturation degrees
+            for (Integer vertex : spine.get(max_sat_vertex)) {
+                current_degree = new HashSet<>();
+                for (Integer neighbor : spine.get(vertex)) { // checking neighbors to find distinct colors
+                    current_degree.add(vertex_colors.get(neighbor));
+                }
+                if (!current_degree.contains(selected_color)) { // new neighbor color
+                    saturation_degree.put(vertex, saturation_degree.get(vertex) + 1); // increment sat deg
+                }
+            }
+        }
+
+        return usedColors.size(); // don't need to keep usedColors with present implementation - can remove later
+    }
+
+    
 
 }
