@@ -1,4 +1,4 @@
-K-colorings of random graphs, in progress. Project to learn about approximation techniques for the NP-hard problem of the chromatic number of a randomly generated graph \
+K-colorings of random graphs with visualization using the JUNG library, in progress. Project to learn about approximation techniques for the NP-hard problem of the chromatic number of a randomly generated graph \
 Methods implemented: Greedy, DSatur 
 
 References: \
